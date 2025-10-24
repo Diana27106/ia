@@ -37,9 +37,8 @@ jobs:
         run: |
           echo "Generando documentación con JSDoc..."
           mkdir -p docs
-          # Generar documentación recursivamente desde la carpeta js
-          npx jsdoc -r -d docs . || true
-          echo "Documentación generada en /docs (errores ignorados para CI)"
+          npx jsdoc -c jsdoc.json || true
+          echo "Documentación generada en /docs"
 
       - name: Configurar credenciales de Vercel
         run: |
