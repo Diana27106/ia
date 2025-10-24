@@ -1,0 +1,60 @@
+name: CI/CD - Despliegue en Vercel
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  build_and_deploy:
+    name: Verificación, pruebas y despliegue
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Verificar que el proyecto contiene JavaScript
+        run: |
+          if ! grep -rq "\.js" .; then
+            echo "No se encontraron archivos JavaScript. Cancelando..."
+            exit 1
+          else
+            echo "Se encontraron archivos JavaScript."
+          fi
+
+      - name: Ejecutar pruebas unitarias
+        run: |
+          npm test || (echo "Las pruebas fallaron." && exit 1)
+          echo "Pruebas unitarias completadas correctamente."
+
+      - name: Verificar documentación del código
+        run: |
+          if [ ! -d "docs" ]; then
+            echo "No se encontró documentación. Generando con JSDoc..."
+            npx jsdoc -c jsdoc.json || npx jsdoc -r -d docs .
+          else
+            echo "Documentación encontrada."
+          fi
+
+      - name: Generar la página de documentación
+        run: |
+          echo "Generando documentación..."
+          npx jsdoc -r -d docs .
+          echo "Documentación generada en la carpeta /docs"
+
+      - name: Configurar credenciales de Vercel
+        run: |
+          npm install -g vercel
+          vercel --version
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: 🚀 Desplegar en Vercel
+        run: |
+          vercel --prod --yes --token ${{ secrets.VERCEL_TOKEN }}
