@@ -1,90 +1,60 @@
-<<<<<<< HEAD
-name: Despliegue de una página web estatica
-on:
-   push:
-      branches: ["main"]
+name: CI/CD - Despliegue en Vercel
 
-permissions: 
-   contents: read
-   pages: write
-   id-token: write
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-jobs:
-   despliegue: 
-      environment: 
-         name: github-page
-         url: ${{steps, deployment.outputs.page_url}}
-      runs-on: ubuntu-latest
-      steps: 
-         - name: Checkout
-           uses: actions/checkout@v5.0.0
-         - name: Setup Pages
-           uses: actions/configure-pages@v5.0.0
-         - name: upload artifact
-           uses: actions/upload-pages-artifact@v4.0.0
-           with:
-              path: '.'
-         - name: despliegue
-           id: deployment
-           uses: actions/deploy-pages@v4.0.5
-           
-           
-         
-           
-
-         
-=======
-name: Despliegue de una página web estática
 on:
   push:
     branches: ["main"]
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-concurrency: group:"pages"
-  cancel-in-progress:false
+
 jobs:
-  despliegue:
-<<<<<<< HEAD
-     environment:
-       name: github-pages
-       url: ${{steps,deployment.outputs.page_url}}
-     runs-on: ubuntu-latest
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v5.0.0
-       - name: Setup Pages  
-         uses: actions/configure-pages@v5.0.0
-       - name: upload artifact
-         uses: actions/upload-pages-artifact@v4.0.0
-         with:
-            path: '.'
-       - name: Despliegue
-         id: deployment
-         uses: actions/deploy-pages@v4.0.5
-
-
-     
->>>>>>> 4c420f0 (Add GitHub Actions workflow for static site deployment)
-=======
-    environment:
-      name: github-pages
-      url: ${{steps,deployment.outputs.page_url}}
+  build_and_deploy:
+    name: Verificación, pruebas y despliegue
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5.0.0
-      - name: Setup Pages
-        uses: actions/configure-pages@v5.0.0
-      - name: upload artifact
-        uses: actions/upload-pages-artifact@v4.0.0
-        with:
-          path: "."
-      - name: Despliegue
-        id: deployment
-        uses: actions/deploy-pages@v4.0.5
->>>>>>> 5d494b2 (Creación del workflow)
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Verificar que el proyecto contiene JavaScript
+        run: |
+          if ! grep -rq "\.js" .; then
+            echo "No se encontraron archivos JavaScript. Abortando..."
+            exit 1
+          else
+            echo "Se encontraron archivos JavaScript."
+          fi
+
+      - name: Ejecutar pruebas unitarias
+        run: |
+          npm test || (echo "Las pruebas fallaron." && exit 1)
+          echo "Pruebas unitarias completadas correctamente."
+
+      - name: Verificar documentación del código
+        run: |
+          if [ ! -d "docs" ]; then
+            echo "No se encontró documentación. Generando con JSDoc..."
+            npx jsdoc -c jsdoc.json || npx jsdoc -r -d docs .
+          else
+            echo "Documentación encontrada."
+          fi
+
+      - name: Generar la página de documentación
+        run: |
+          echo "Generando documentación..."
+          npx jsdoc -r -d docs .
+          echo "Documentación generada en la carpeta /docs"
+
+      - name: Configurar credenciales de Vercel
+        run: |
+          npm install -g vercel
+          vercel --version
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Desplegar en Vercel
+        run: |
+          vercel --prod --yes --token ${{ secrets.VERCEL_TOKEN }}
