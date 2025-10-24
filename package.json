@@ -1,0 +1,25 @@
+{
+  "name": "ia",
+  "version": "1.0.0",
+  "description": "Todo sobre las verdades y mentiras de la IA",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "doc": "jsdoc -r -d docs ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Diana27106/ia.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Diana27106/ia/issues"
+  },
+  "homepage": "https://github.com/Diana27106/ia#readme",
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "jsdoc": "^4.0.5"
+  }
+}
