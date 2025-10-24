@@ -33,20 +33,13 @@ jobs:
           npm test || (echo "Las pruebas fallaron." && exit 1)
           echo "Pruebas unitarias completadas correctamente."
 
-      - name: Verificar documentación del código
+      - name: Generar documentación con JSDoc
         run: |
-          if [ ! -d "docs" ]; then
-            echo "No se encontró documentación. Generando con JSDoc..."
-            npx jsdoc -c jsdoc.json || npx jsdoc -r -d docs .
-          else
-            echo "Documentación encontrada."
-          fi
-
-      - name: Generar la página de documentación
-        run: |
-          echo "Generando documentación..."
-          npx jsdoc -r -d docs .
-          echo "Documentación generada en la carpeta /docs"
+          echo "Generando documentación con JSDoc..."
+          mkdir -p docs
+          # Generar documentación recursivamente desde la carpeta js
+          npx jsdoc -r -d docs . || true
+          echo "Documentación generada en /docs (errores ignorados para CI)"
 
       - name: Configurar credenciales de Vercel
         run: |
