@@ -41,14 +41,9 @@ jobs:
           echo "Documentación generada en /docs"
       - name: Deploy to S3
         if: success()
-        uses: Reggionick/s3-deploy@v4.0.0
+        uses: deploy-actions/s3-spa@v1.0.3
         with:
-          folder: ./
           bucket: ${{ secrets.S3_BUCKET_NAME }}
-          bucket-region: ${{ secrets.AWS_REGION }}
-          delete-removed: true
-          no-cache: true
-          private: false
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
