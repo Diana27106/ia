@@ -2,7 +2,6 @@
 
 ## 1️⃣ Información básica
 
-- **Estudiante:** Diana
 - **Proyecto:** IA
 - **Repositorio GitHub:** [https://github.com/Diana27106/ia](https://github.com/Diana27106/ia)
 - **Página desplegada (producción):** [https://ia-2teerpkfw-diana27106s-projects.vercel.app/](https://ia-2teerpkfw-diana27106s-projects.vercel.app/)
