@@ -50,5 +50,4 @@ jobs:
 
       - name: Desplegar en S3
         run: |
-          echo "Sincronizando carpeta build con S3..."
-          aws s3 sync build s3://miweb-ia-demo --delete
+          aws s3 sync . s3://miweb-ia-demo --delete --exclude ".git/*" --exclude ".github/*"
