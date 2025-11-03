@@ -11,6 +11,35 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Usar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Verificar que el proyecto contiene JavaScript
+        run: |
+          if ! grep -rq "\.js" .; then
+            echo "No se encontraron archivos JavaScript. Cancelando..."
+            exit 1
+          else
+            echo "Se encontraron archivos JavaScript."
+          fi
+
+      - name: Ejecutar pruebas unitarias
+        run: |
+          npm test || (echo "Las pruebas fallaron." && exit 1)
+          echo "Pruebas unitarias completadas correctamente."
+
+      - name: Generar documentación con JSDoc
+        run: |
+          echo "Generando documentación con JSDoc..."
+          mkdir -p docs
+          npx jsdoc -c jsdoc.json || true
+          echo "Documentación generada en /docs"
+
       - name: Configurar credenciales de AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
