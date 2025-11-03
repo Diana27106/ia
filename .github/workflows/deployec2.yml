@@ -27,8 +27,5 @@ jobs:
       - name: Desplegar en EC2
         run: |
           echo "Subiendo archivos al servidor EC2..."
-          scp -o StrictHostKeyChecking=no -i private_key.pem -r ./index.html ./styles.css ./script.js ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            sudo mv /tmp/*.html /tmp/*.css /tmp/*.js /var/www/html/
-            sudo systemctl restart nginx
-          EOF
+          scp -i private_key.pem -r -o StrictHostKeyChecking=no index.html css js \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/html/
