@@ -24,8 +24,16 @@ jobs:
           echo "${{ secrets.EC2_KEY }}" > private_key.pem
           chmod 600 private_key.pem
 
-      - name: Desplegar en EC2
+      - name: Subir archivos al servidor EC2
         run: |
-          echo "Subiendo archivos al servidor EC2..."
+          echo "🚀 Subiendo archivos al servidor EC2..."
           scp -i private_key.pem -r -o StrictHostKeyChecking=no index.html css js \
-            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/html/
+          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/
+
+      - name: Mover archivos a /var/www/html
+        run: |
+          echo "📦 Moviendo archivos al directorio de Nginx..."
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "\
+            sudo mv /home/${{ secrets.EC2_USER }}/index.html /var/www/html/ && \
+            sudo rm -rf /var/www/html/css /var/www/html/js && \
+            sudo mv /home/${{ secrets.EC2_USER }}/css /home/${{ secrets.EC2_USER }}/js /var/www/html/"
