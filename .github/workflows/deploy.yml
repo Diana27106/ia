@@ -48,4 +48,7 @@ jobs:
 
       - name: 🚀 Desplegar en Vercel
         run: |
-          vercel --prod --yes --token ${{ secrets.VERCEL_TOKEN }}
+          vercel --prod --yes \
+          --token ${{ secrets.VERCEL_TOKEN }} \
+          --name practicafinalexamen
+
